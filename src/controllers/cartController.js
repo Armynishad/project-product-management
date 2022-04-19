@@ -48,6 +48,7 @@ const createCart = async function (req, res) {
             }
 
             const totalItems = cartBody.items.length
+
             const totalPrice = product.price * cartBody.items[0].quantity
 
             const cartData = { userId: userId, items: cartBody.items, totalPrice: totalPrice, totalItems: totalItems }
@@ -96,7 +97,7 @@ const createCart = async function (req, res) {
 
             const newCart = await cartModel.findOneAndUpdate({ userId: userId },
                 { $addToSet: { items: { $each: cartBody.items } }, totalPrice: totalPrice, totalItems: totalItem }, { new: true })
-
+//
             return res.status(201).send({ status: true, message: 'product added in cart', data: newCart })
         }
     }
@@ -192,8 +193,8 @@ const updateCart = async function (req, res) {
             return res.status(400).send({ status: false, message: 'removeProduct should be present in body' })
         }
 
-        if (!(removeProduct == 'all' || removeProduct == 1)) {
-            return res.status(400).send({ status: false, message: `removeProduct value should be either 'all' or '1'` })
+        if (!(removeProduct == 0 || removeProduct == 1)) {
+            return res.status(400).send({ status: false, message: `removeProduct value should be either '0' or '1'` })
         }
 
         const findCart = await cartModel.findOne({ userId: userId, _id: cartId })
@@ -225,9 +226,13 @@ const updateCart = async function (req, res) {
             }
         }
 
-        if (removeProduct == 'all') {
+        if (removeProduct == 0) {
             for (let i = 0; i < findCart.items.length; i++) {
-                if (productId == findCart.items[i].productId) {
+                if (productId != findCart.items[i].productId) {
+
+                    return res.status(400).send({status: false, message: 'This product is not present in cart'})
+                }
+                if(productId == findCart.items[i].productId) {
                     let totalPrice = findCart.totalPrice - (product.price * findCart.items[i].quantity)
                     let totalItem = findCart.totalItems - 1
                     findCart.items.splice(i, 1)
