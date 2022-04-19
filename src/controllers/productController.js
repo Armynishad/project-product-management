@@ -33,6 +33,10 @@ const createProduct = async function (req, res) {
             return res.status(400).send({ status: false, message: 'Description is required' })
         }
 
+        if (!validator.validString(productImage)) {
+            return res.status(400).send({ status: false, message: 'profile image is required' })
+        }
+
         if (!validator.isValid(price)) {
             return res.status(400).send({ status: false, message: 'Price is required' })
         }
@@ -193,7 +197,7 @@ const getProductsById = async function (req, res) {
 }
 
 
-// delete product
+// update product
 const updateProduct = async function (req, res) {
     try {
         let productId = req.params.productId
@@ -244,8 +248,9 @@ const updateProduct = async function (req, res) {
         if (currencyId) {
             if (!(currencyId == 'INR')) {
                 return res.status(400).send({ status: false, message: 'currencyId should be a INR' })
+            }
         }
-    }
+        
         if (!validator.validString(style)) {
             return res.status(400).send({ status: false, message: 'style cannot be empty' })
         }
@@ -315,7 +320,7 @@ const updateProduct = async function (req, res) {
 
 
 
-
+// delete product
 const deleteProduct = async function(req, res) {
     try {
         const productId = req.params.productId

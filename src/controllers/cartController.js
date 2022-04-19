@@ -43,6 +43,10 @@ const createCart = async function (req, res) {
                 return res.status(404).send({ status: false, message: ' This product is already deleted' })
             }
 
+            if(cartBody.items[0].quantity == 0) {
+                return res.status(404).send({ status: false, message: 'Quantity can not be zero, Minimum value shuold be 1' })
+            }
+
             const totalItems = cartBody.items.length
             const totalPrice = product.price * cartBody.items[0].quantity
 
@@ -141,6 +145,7 @@ const getCart = async function (req, res) {
 const updateCart = async function (req, res) {
     try {
         let userId = req.params.userId
+        let tokenUserId = req.userId
         let updateBody = req.body
 
         if (!validator.isValidObjectId(userId)) {
@@ -150,6 +155,10 @@ const updateCart = async function (req, res) {
         const user = await userModel.findById(userId)
         if (!user) {
             return res.status(404).send({ status: false, message: 'user does not exist with this userId' })
+        }
+
+        if (user._id != tokenUserId) {
+            return res.status(401).send({ status: false, message: 'Unauthorized access!' })
         }
 
         if (!validator.isValidRequestBody(updateBody)) {

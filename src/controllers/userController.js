@@ -131,7 +131,7 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, message: `Billing address's pincode should be there` })
         }
 
-        profileImage = await aws.uploadFile(files[0]);
+        profileImage = await aws.uploadFile(files[0])
 
         const encryptedPassword = await bcrypt.hash(password, 10)
 

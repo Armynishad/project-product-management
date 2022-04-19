@@ -64,7 +64,7 @@ const createOrder = async function (req, res) {
         }
 
         let count = 0
-        for(let i=0; i<findCart.items.length; i++){
+        for(let i=0; i<findCart.items.length; i++) {
             count = count + findCart.items[i].quantity
         }
 
@@ -92,7 +92,7 @@ const createOrder = async function (req, res) {
 
 
 // update order
-const updateOrder = async function(req, res) {
+const updateOrder = async function (req, res) {
     try {
 
         let userId = req.params.userId
