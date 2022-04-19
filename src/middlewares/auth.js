@@ -17,8 +17,9 @@ const auth = async function (req, res, next) {
         if (!verify) {
             return res.status(403).send({ status: false, message: 'Invalid authentication token in request header' })
         }
-
+        
         req.userId = decodeToken.userId
+
         next()
     } 
     catch (error) {
