@@ -35,18 +35,18 @@ const createUser = async function (req, res) {
         }
 
         if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-            return res.status(400).send({ status: false, message: 'Invalid Email' }) 
+            return res.status(400).send({ status: false, message: 'Invalid Email' })
         }
 
         const emailAlreadyUsed = await userModel.findOne({ email })
         if (emailAlreadyUsed) {
             return res.status(400).send({ status: false, message: `${email} is already in use. Please try another email Id.` })
         }
-            
+
         if (!validator.isValidRequestBody(files)) {
             return res.status(400).send({ status: false, message: 'Profile Image is required' })
         }
-        
+
         if (!validator.isValid(phone)) {
             return res.status(400).send({ status: false, message: 'phone number is required' })
         }
@@ -140,7 +140,7 @@ const createUser = async function (req, res) {
         const saveUserData = await userModel.create(userData)
 
         return res.status(201).send({ status: true, message: 'user created successfully', data: saveUserData })
-    } 
+    }
     catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
@@ -186,8 +186,8 @@ const userLogin = async function (req, res) {
         const encryptedPassword = await bcrypt.compare(password, bcryptPassword)
 
         if (!encryptedPassword) return res.status(401).send({ status: false, message: 'Password is incorrect' })
-        
-        
+
+
         const userId = user._id
         const token = await jwt.sign({
             userId: userId,
@@ -219,7 +219,7 @@ const getUserProfile = async function (req, res) {
         if (!userProfile) {
             return res.status(400).send({ status: false, message: `User doesn't exists by ${userId}` })
         }
-        
+
         if (tokenUserId != userProfile._id) {
             return res.status(403).send({ status: false, message: 'Unauthorized access' })
         }
@@ -239,7 +239,7 @@ const updateProfile = async function (req, res) {
         let userId = req.params.userId
         let tokenUserId = req.userId
         let files = req.files
-        
+
         if (!validator.isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: `${userId} is not a valid userId` })
         }
@@ -248,13 +248,13 @@ const updateProfile = async function (req, res) {
             return res.status(400).send({ status: false, message: 'Unauthorized access!' })
         }
 
-        if(files) {
+        if (files) {
             if (Object.keys(files).length != 0) {
                 const updateProfileImage = await aws.uploadFile(files[0]);
                 updateBody.profileImage = updateProfileImage;
             }
         }
-        
+
         if (!validator.isValidRequestBody(updateBody)) {
             return res.status(400).send({ status: false, message: 'Please, provide some data to update' })
         }
@@ -396,7 +396,7 @@ const updateProfile = async function (req, res) {
             }
         }
 
-        
+
         let updateUserProfile = await userModel.findOneAndUpdate({ _id: userId }, {
             $set: {
                 fname: fname,
@@ -415,9 +415,9 @@ const updateProfile = async function (req, res) {
         }, { new: true })
 
         return res.status(200).send({ status: true, data: updateUserProfile })
-    } 
+    }
     catch (error) {
-        return res.status(500).send({ status: false, message: error.message})
+        return res.status(500).send({ status: false, message: error.message })
     }
 }
 
